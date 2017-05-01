@@ -24,6 +24,10 @@ The goals / steps of this project are the following:
 [original]: ./output_images/test5.jpg "Original"
 [image2]: ./output_images/undistorted_road.png "Road Transformed"
 [thresholded]: ./output_images/thresholded_images.png "Thresholded Image"
+[transformed]: ./output_images/transformed.png "Transformed Image"
+[window]: ./output_images/window_lane_detection.png "Window Image"
+[polynomial]: ./output_images/polynomial_detection.png "Polynomial Image"
+[final]: ./output_images/final_result.png "Final Image"
 
 [image3]: ./examples/binary_combo_example.jpg "Binary Example"
 [image4]: ./examples/warped_straight_lines.jpg "Warp Example"
@@ -101,6 +105,26 @@ I used a combination of color and gradient thresholds to generate a binary image
 ![alt text][image3]
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
+I transform the image by two steps.
+
+In the first step, I calculate the Transformation Matrix and its inverse. To do this, I define 4 points in the original image and their equivalents in the transformed image.
+
+I use these points:
+This resulted in the following source and destination points:
+
+| Source        | Destination   | Place |
+|:-------------:|:-------------:| :-------------:|
+| 197, 715      | 300, 715        | Bottom Left |
+| 1136, 715      | 1000, 715      | Bottom Right |
+| 594, 447     | 300, 0      | Top Left |
+| 691, 447      | 1000, 0        | Top Right |
+
+With these points, I get the matrix with **cv2.getPerspectiveTransform** and I transform the image with **cv2.warpPerspective**
+
+The code can be found at cell #6 **perspective_transform_full_process** and **perspective_transform**.
+
+
+![alt text][transformed]
 
 The code for my perspective transform includes a function called `warper()`, which appears in lines 1 through 8 in the file `example.py` (output_images/examples/example.py) (or, for example, in the 3rd code cell of the IPython notebook).  The `warper()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points.  I chose the hardcode the source and destination points in the following manner:
 
@@ -131,6 +155,27 @@ I verified that my perspective transform was working as expected by drawing the 
 ![alt text][image4]
 
 #### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+I have implemented the both methods suggested at Lesson "Advanced Lane Finding".
+##### Finding by windows
+The first method is by window method. In this method, you get the 2 anchor points by an histogram.
+From this point, the algorithm calculates windows from this anchor points and find pixels in that window. With this pixels, it calculates a new line point.
+
+With all these points found, we can calculate the polynomial with **np.polyfit**
+
+![alt text][window]
+
+This method can be found at cell #9, named by **Sliding Window**
+##### Finding by Polynomial
+This method use a precalculated polynomial, with the previous method for instance.
+With the polynomial calculated, you can find a new polynomial searching pixels in the proximity of the previous line
+
+![alt text][polynomial]
+This method can be found at cell #10, named by **Polynomial**
+
+
+
+
+
 
 Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
 
@@ -138,21 +183,32 @@ Then I did some other stuff and fit my lane lines with a 2nd order polynomial ki
 
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
+The curvature is based on Lesson **Advanced Lane Finding**, point 35, **Measuring curvature**, and in [this article](./http://www.intmath.com/applications-differentiation/8-radius-curvature.php)
+
+This method can be found at cell #11, named by **Curvature**
+In this block I calculate the curvature in pixels and in meters. I calculate also the vehicle bias from the lane center.
+
 I did this in lines # through # in my code in `my_other_file.py`
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+This method can be found at cell #12, named by **Draw In image**
+In this block, I draw a polygon with the calculated lines. 
+Then, I transform this polygon with the inverse matrix transformation and I merge it with the original image.
+Then, I write at the image the curvature and the bias
 
-![alt text][image6]
+![alt text][final]
 
 ---
 
 ### Pipeline (video)
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
+To provide the video, I have merged all the algorithm and techniques in two classes, LaneDetector and Line. LaneDetector has two Lines, left line and right line.
 
-Here's a [link to my video result](./project_video.mp4)
+Line class is at cell #13 and LaneDetector is at cell #14
+
+Here's a [link to my video result](./out_project_video.mp4)
 
 ---
 
@@ -160,4 +216,19 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+The pipeline is basically the pipeline explained at Lesson **Advanced Lane Finding**
+
+
+1. Calibration
+2. Apply calibration to the image.
+3. Preprocess image (thresholding)
+4. Transform perspective
+5. Lane Detection  
+
+In my opinion, there are two tricky parts.
+
+The image processing could be very tricky. It is very trial and error. A threshold combination could work very well for an image, but it could fail in some situations. The finding algorithms are applied to this image, so if this image is wrong, the algorithm is going to fail.
+
+The second problem is the false positive. When you find the right and left lane, the curvature is ok and they are parallel, but maybe you have detected something else as line, not the true line.
+
+I improve this problem, I think it is very important to check the result, with historical data or even better, with 2 or 3 algorithm totally different, based on very different approach, and verified the result is similar
