@@ -19,8 +19,12 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/undistort_output.png "Undistorted"
-[image2]: ./test_images/test1.jpg "Road Transformed"
+
+[image1]: ./output_images/undistorted_image.png "Undistorted"
+[original]: ./output_images/test5.jpg "Original"
+[image2]: ./output_images/undistorted_road.png "Road Transformed"
+[thresholded]: ./output_images/thresholded_images.png "Thresholded Image"
+
 [image3]: ./examples/binary_combo_example.jpg "Binary Example"
 [image4]: ./examples/warped_straight_lines.jpg "Warp Example"
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
@@ -45,6 +49,14 @@ You're reading it!
 
 The code for this step is contained in the second code cell of the IPython notebook located in [advance\_lane\_lines.ipynb](./advance_lane_lines.ipynb)
 
+In this block, I use the images located in the calibration folder (camera_cal). With this images, I use the function **cv2.findChessboardCorners** to find the corners of the chessboard.
+
+For calibrating the camera, I use **cv2.calibrateCamera**
+
+The result can be found at the end of cell #3
+
+![alt text][image1]
+
 The code for this step is contained in the first code cell of the IPython notebook located in "./examples/example.ipynb" (or in lines # through # of the file called `some_file.py`).  
 
 I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0, such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
@@ -54,6 +66,9 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 ![alt text][image1]
 
 ### Pipeline (single images)
+To demostrate the pipeline, I have prepared a code block named as Image Playground (cell #6 and #7), at  [advance\_lane\_lines.ipynb](./advance_lane_lines.ipynb)
+
+![alt text][original]
 
 #### 1. Provide an example of a distortion-corrected image.
 
@@ -61,6 +76,25 @@ To demonstrate this step, I will describe how I apply the distortion correction 
 ![alt text][image2]
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
+
+In cell #6 and #7 I have tested several thershold methods, but isolated.
+The final implementation I use can be found at cell #8, named by **Test full Preprocess**
+
+I use 3 masks.
+
+I use 2 color channels. I use red channel from RGB color space and saturation channel from HSL color space.
+I also use a sobel x gradient, applied to saturation channel.
+
+Each mask as its own threshold values. Finally, I combine the free masks as:
+
+Masked <- ((Red Mask) AND (Saturation MASK)) OR (Sobel Gradient)
+
+The next image shows the result:
+
+- Red channel is mapped to the red mask
+- Green channel is mapped to the sobel gradient mask
+- Blue channel is mapped to the saturation mask
+![alt text][thresholded]
 
 I used a combination of color and gradient thresholds to generate a binary image (thresholding steps at lines # through # in `another_file.py`).  Here's an example of my output for this step.  (note: this is not actually from one of the test images)
 
