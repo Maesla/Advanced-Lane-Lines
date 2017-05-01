@@ -1,1 +1,10 @@
 Please save your output images to this folder and include a description in your README of what each image shows.
+
+- Final Result: an image from the entire pipeline
+- Polynomial_Detection: line detection by polynomial approach
+- test5: qn example image
+- Thresholded_image: an image with the thresolding applied
+- transformed: prespective transformation
+- undistorted_image: image with and without distorsion correction
+- undistorted_road: road image with distorsion correction
+- window_lane_detection: line detection by window approach
