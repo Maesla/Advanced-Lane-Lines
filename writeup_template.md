@@ -93,7 +93,7 @@ The next image shows the result:
 
 I have decided not to use any sobel gradient. In several tests, it does not contribute too much and add to much noise. It also detects false positives.
 
-In the next image, it can be saw the problem with the sobel gradient, because detects as a edge the separation between the crash barrier and the road. So it adds all the separation as pixels to the composition
+In the next image, it can be saw the problem with the sobel gradient, because detects as an edge the separation between the crash barrier and the road. So it adds all the separation as pixels to the composition
 ![alt text][sobel]
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
