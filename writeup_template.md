@@ -167,7 +167,7 @@ Dash line is about 3 meter. I calculate the number of dashed lines in wrapped im
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-This block can be found at cell #12, named by **Draw In image**.
+This block can be found at cell #14, named by **Draw In image**.
 
 In this block, I draw a polygon with the calculated lines. 
 Then, I transform this polygon with the inverse matrix transformation and I merge the result with the original image.
@@ -182,9 +182,22 @@ Then, I write the text for the the curvature and the bias in the image.
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 To provide the video, I have merged all the algorithm and techniques in two classes, LaneDetector and Line. LaneDetector has two Lines, left line and right line.
 
-Line class is at cell #13 and LaneDetector is at cell #14
+Line class is at cell #15 and LaneDetector is at cell #16
 
-The first frames are detected by the window method. Once the lines are detected, I use the polynomial method, in order to search only near to the previous line
+The first frames are detected by the window method. Once the lines are detected, I use the polynomial method, in order to search only near to the previous line.
+
+To avoid bad detection and false positives, a sanity check has been implemented.
+
+1. I calculate the lines in a temporal variable
+2. After detecting the lines, I do a sanity check
+3. Top and bottom lane width is checked. They must be similar
+4. Bottom lane width is checked.
+5. Left and Right line first derivative are checked. They must be similar
+6. Left and Right line Concavity are checked. They must be similar
+
+
+If the lines does not pass the sanity check, last checked and validated value are used.
+If 5 or more lines does not pass the sanity check, window line detection is used instead of polynomial method.
 
 Here's a [link to my video result](./out_project_video.mp4)
 
