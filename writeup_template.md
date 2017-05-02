@@ -147,6 +147,23 @@ This method can be found at cell #11, named by **Curvature**.
 
 In this block I calculate the curvature in pixels and in meters. I calculate also the vehicle bias from the lane center.
 
+In the lesson code snippet, the meters per pixels are hardcoded.
+
+However, I calculate the width in runtime
+
+```python
+left_c = left_fit[0] * y_eval** 2 + left_fit[1] * y_eval + left_fit[2]
+right_c = right_fit[0] * y_eval ** 2 + right_fit[1] * y_eval + right_fit[2]
+width = right_c - left_c
+print(width)
+
+ym_per_pix = (3*7)/720 # meters per pixel in y dimension
+xm_per_pix = 3.7 / width
+```
+
+Dash line is about 3 meter. I calculate the number of dashed lines in wrapped image and then convert them to meters. It have almost 7 dashed lines (3 colored in white and 4 spaces) - they are placed in 720 pixels, so you I use the following coefficient 3*7/720
+
+
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
@@ -166,6 +183,8 @@ Then, I write the text for the the curvature and the bias in the image.
 To provide the video, I have merged all the algorithm and techniques in two classes, LaneDetector and Line. LaneDetector has two Lines, left line and right line.
 
 Line class is at cell #13 and LaneDetector is at cell #14
+
+The first frames are detected by the window method. Once the lines are detected, I use the polynomial method, in order to search only near to the previous line
 
 Here's a [link to my video result](./out_project_video.mp4)
 
