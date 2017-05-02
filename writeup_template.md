@@ -24,6 +24,7 @@ The goals / steps of this project are the following:
 [original]: ./output_images/test5.jpg "Original"
 [image2]: ./output_images/undistorted_road.png "Road Undistorted"
 [thresholded]: ./output_images/thresholded_images.png "Thresholded Image"
+[sobel]: ./output_images/sobel_problem.png "Sobel Image"
 [transformed]: ./output_images/transformed.png "Transformed Image"
 [window]: ./output_images/window_lane_detection.png "Window Image"
 [polynomial]: ./output_images/polynomial_detection.png "Polynomial Image"
@@ -75,22 +76,25 @@ Here is the result:
 In cell #6 and #7 I have tested several threshold methods, but isolated.
 The final implementation that I use can be found at cell #8, named by **Test full Preprocess**
 
-I use 3 masks.
+I use 2 color spaces, HSV and RGB.
+For yellow lines, I use 3 thresholds, with H, S and V channels
+For white lines, I use 2 thresholds, with R and V channels.
 
-I use 2 color channels: red channel from RGB color space and saturation channel from HSL color space.
-I also use a sobel x gradient, applied to saturation channel.
+I have decided not to use any sobel gradient. In several tests, it does not contribute too much and add to much noise. It also detects false positives
 
-Each mask as its own threshold values. Finally, I combine the free masks as:
-
-Masked <- ((Red Mask) AND (Saturation MASK)) OR (Sobel Gradient)
 
 The next image shows the result:
 
-- Red channel is mapped to the red mask
-- Green channel is mapped to the sobel gradient mask
-- Blue channel is mapped to the saturation mask
+- Red channel is not mapped
+- Green channel is mapped to yellow lines threshold
+- Blue channel is mapped to white lines threshold
 ![alt text][thresholded]
 
+
+I have decided not to use any sobel gradient. In several tests, it does not contribute too much and add to much noise. It also detects false positives.
+
+In the next image, it can be saw the problem with the sobel gradient, because detects as a edge the separation between the crash barrier and the road. So it adds all the separation as pixels to the composition
+![alt text][sobel]
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 I transform the image by two steps.
