@@ -76,9 +76,9 @@ Here is the result:
 In cell #6 and #7 I have tested several threshold methods, but isolated.
 The final implementation that I use can be found at cell #8, named by **Test full Preprocess**
 
-I use 2 color spaces, HSV and RGB.
-For yellow lines, I use 3 thresholds, with H, S and V channels
-For white lines, I use 2 thresholds, with R and V channels.
+I use 3 color spaces, HSV, HSL and RGB.
+For yellow lines, I search a range inside the HSV image
+For white lines, I use several threshold and ranges in RGB, HSV and HSL images.
 
 I have decided not to use any sobel gradient. In several tests, it does not contribute too much and add to much noise. It also detects false positives
 
@@ -196,8 +196,12 @@ To avoid bad detection and false positives, a sanity check has been implemented.
 6. Left and Right line Concavity are checked. They must be similar
 
 
-If the lines does not pass the sanity check, last checked and validated value are used.
+If the lines does not pass the sanity check, last checked and validated lines are used.
 If 5 or more lines does not pass the sanity check, window line detection is used instead of polynomial method.
+
+If the lines pass the sanity check, they are not used directly. I use a weighted average with the previous validated line.
+
+NewLine = ValidatedLine\*t + LastValidatedLine\*(1-t). With some trial and error, I have chosen t = 0.7
 
 Here's a [link to my video result](./out_project_video.mp4)
 
